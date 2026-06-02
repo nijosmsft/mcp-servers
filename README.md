@@ -14,9 +14,9 @@ don't.
 
 | Server | Purpose | Status |
 |---|---|---|
-| [**etw-mcp**](https://github.com/nijosmsft/etw-mcp) | Analyze and capture Windows ETW/WPR traces (`.etl`). Wraps `xperf`, native ETW (OpenTraceW), a .NET TraceEvent sidecar, and pktmon. 60+ analysis tools, 4 capture-authoring tools, 9 curated `.wprp` profiles. | beta — v0.3.0 |
-| [**perfmon-mcp**](https://github.com/nijosmsft/perfmon-mcp) | Windows performance counter (PDH) capture, `.blg` analysis, and live `Get-Counter` snapshots. 14 tools, 4 curated counter profiles including NIC RSS-queue validation. | alpha — v0.1.0 |
-| [**sysinternals-mcp**](https://github.com/nijosmsft/sysinternals-mcp) | Wraps the Sysinternals tool suite (Handle, Sigcheck, PsList, AccessChk, ProcMon) for process introspection, binary triage, ACL audit, and ProcMon capture authoring. Ships zero binaries — user provides Sysinternals install. | alpha — v0.1.0 |
+| [**etw-mcp**](https://github.com/nijosmsft/etw-mcp) | Analyze and capture Windows ETW/WPR traces (`.etl`). Wraps `xperf`, native ETW (OpenTraceW), a .NET TraceEvent sidecar, and pktmon. 60+ analysis tools, 4 capture-authoring tools, 9 curated `.wprp` profiles. Sidecar auto-bootstraps on first use. | beta — v0.5.0 |
+| [**perfmon-mcp**](https://github.com/nijosmsft/perfmon-mcp) | Windows performance counter (PDH) capture, `.blg` analysis, and live `Get-Counter` snapshots. 27 tools, 4 curated counter profiles including NIC RSS-queue validation. | beta — v0.2.0 |
+| [**sysinternals-mcp**](https://github.com/nijosmsft/sysinternals-mcp) | Wraps the Sysinternals tool suite (Handle, Sigcheck, PsList, AccessChk, ProcMon, Autoruns, Tcpvcon, Coreinfo, PsInfo, ListDLLs, ProcDump, Strings) for process introspection, binary triage, ACL audit, ProcMon capture authoring, and bootstrap install. 32 tools. Ships zero binaries — user provides Sysinternals install or invokes the `bootstrap_sysinternals` tool to download. | beta — v0.2.0 |
 | [**LabLink**](https://github.com/nijosmsft/LabLink) | Give your AI assistant secure remote-hands on a fleet of Windows lab machines. MCP server + lightweight node agent (mTLS + token). Execute commands, move files, manage processes across many nodes. Pure Go, no runtime deps. | beta |
 
 ---
@@ -32,11 +32,27 @@ Add to `~/.copilot/mcp-config.json`:
       "command": "uv",
       "args": [
         "run", "--no-project", "--with",
-        "https://github.com/nijosmsft/etw-mcp/releases/download/v0.4.0/etw_mcp-0.4.0-py3-none-any.whl",
+        "https://github.com/nijosmsft/etw-mcp/releases/download/v0.5.0/etw_mcp-0.5.0-py3-none-any.whl",
         "python", "-m", "etw_analyzer.server"
+      ]
+    },
+    "perfmon-mcp": {
+      "command": "uv",
+      "args": [
+        "run", "--no-project", "--with",
+        "https://github.com/nijosmsft/perfmon-mcp/releases/download/v0.2.0/perfmon_mcp-0.2.0-py3-none-any.whl",
+        "python", "-m", "perfmon_mcp.server"
+      ]
+    },
+    "sysinternals-mcp": {
+      "command": "uv",
+      "args": [
+        "run", "--no-project", "--with",
+        "https://github.com/nijosmsft/sysinternals-mcp/releases/download/v0.2.0/sysinternals_mcp-0.2.0-py3-none-any.whl",
+        "python", "-m", "sysinternals_mcp.server"
       ],
       "env": {
-        "ETW_MCP_DOTNET_SIDECAR": "C:\\install\\etw-extract.exe"
+        "SYSINTERNALS_MCP_DIR": "C:\\Sysinternals"
       }
     },
     "lablink": {
@@ -46,16 +62,20 @@ Add to `~/.copilot/mcp-config.json`:
 }
 ```
 
-`etw-mcp` also needs the .NET sidecar — download it once:
+**Note on the `etw-mcp` .NET sidecar:** v0.5+ auto-downloads `etw-extract.exe`
+to `%LOCALAPPDATA%\etw-mcp\sidecar\v<version>\` on first `load_trace`. No manual
+step needed. To pin a specific binary (e.g., for air-gapped use), set
+`ETW_MCP_DOTNET_SIDECAR=<path>` in the server's `env`. To disable auto-fetch
+entirely, set `ETW_MCP_NO_AUTO_DOWNLOAD=1` (the server then falls back to the
+native ETW path that ships with the wheel).
 
-```powershell
-$url = "https://github.com/nijosmsft/etw-mcp/releases/download/v0.4.0/etw-extract.exe"
-New-Item -ItemType Directory -Force -Path C:\install | Out-Null
-Invoke-WebRequest -Uri $url -OutFile C:\install\etw-extract.exe
-```
+**Note on the `sysinternals-mcp` binaries:** Sysinternals binaries are EULA-bound
+and NOT redistributable. Either install the suite separately (download from
+https://learn.microsoft.com/en-us/sysinternals/ and unzip to `C:\Sysinternals\`)
+or let the MCP help via `bootstrap_sysinternals(target="local")` — it emits
+paste-ready PowerShell to download + install + accept the EULA on your behalf.
 
-For per-MCP install details, EULA acceptance (where relevant), and version
-pinning, see each repo's `README.md`.
+For per-MCP install details and version pinning, see each repo's `README.md`.
 
 ---
 
