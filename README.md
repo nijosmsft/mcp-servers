@@ -32,7 +32,7 @@ Add to `~/.copilot/mcp-config.json`:
       "command": "uv",
       "args": [
         "run", "--no-project", "--with",
-        "https://github.com/nijosmsft/etw-mcp/releases/latest/download/etw_mcp-py3-none-any.whl",
+        "https://github.com/nijosmsft/etw-mcp/releases/download/v0.4.0/etw_mcp-0.4.0-py3-none-any.whl",
         "python", "-m", "etw_analyzer.server"
       ],
       "env": {
@@ -44,6 +44,14 @@ Add to `~/.copilot/mcp-config.json`:
     }
   }
 }
+```
+
+`etw-mcp` also needs the .NET sidecar — download it once:
+
+```powershell
+$url = "https://github.com/nijosmsft/etw-mcp/releases/download/v0.4.0/etw-extract.exe"
+New-Item -ItemType Directory -Force -Path C:\install | Out-Null
+Invoke-WebRequest -Uri $url -OutFile C:\install\etw-extract.exe
 ```
 
 For per-MCP install details, EULA acceptance (where relevant), and version
