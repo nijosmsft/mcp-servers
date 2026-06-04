@@ -17,7 +17,7 @@ don't.
 | [**etw-mcp**](https://github.com/nijosmsft/etw-mcp) | Analyze and capture Windows ETW/WPR traces (`.etl`). Wraps `xperf`, native ETW (OpenTraceW), a .NET TraceEvent sidecar, and pktmon. 60+ analysis tools, 4 capture-authoring tools, 9 curated `.wprp` profiles. Sidecar auto-bootstraps on first use. Honest symbol resolution (SYMFLAG_EXPORT tracking, `extra_symbol_paths`, cache-pollution diagnostics). | beta — v0.6.0 |
 | [**perfmon-mcp**](https://github.com/nijosmsft/perfmon-mcp) | Windows performance counter (PDH) capture, `.blg` analysis, and live `Get-Counter` snapshots. 33 tools, 4 curated counter profiles including NIC RSS-queue validation with hot/idle detection + curated Mellanox RSS lens. | beta — v0.3.0 |
 | [**sysinternals-mcp**](https://github.com/nijosmsft/sysinternals-mcp) | Wraps the Sysinternals tool suite (Handle, Sigcheck, PsList, AccessChk, ProcMon, Autoruns, Tcpvcon, Coreinfo, PsInfo, ListDLLs, ProcDump, Strings) for process introspection, binary triage, ACL audit, ProcMon capture authoring, and bootstrap install. 32 tools. Ships zero binaries — user provides Sysinternals install or invokes the `bootstrap_sysinternals` tool to download. | beta — v0.2.0 |
-| [**LabLink**](https://github.com/nijosmsft/LabLink) | Give your AI assistant secure remote-hands on a fleet of Windows lab machines. MCP server + lightweight node agent (mTLS + token). Execute commands, move files, manage processes across many nodes. Pure Go, no runtime deps. Bulk `reboot_nodes` for parallel fleet reboots. | beta — v0.2.0 |
+| [**LabLink**](https://github.com/nijosmsft/LabLink) | Give your AI assistant secure remote-hands on a fleet of Windows lab machines. MCP server + lightweight node agent (mTLS + token). Execute commands, move files, manage processes across many nodes. Pure Go, no runtime deps. Bulk `reboot_nodes` for parallel fleet reboots. Update an existing install with `scripts/Update-LabLink.ps1` (LabLink's equivalent of `pip install --upgrade`). | beta — v0.3.0 |
 
 ---
 
@@ -56,7 +56,7 @@ Add to `~/.copilot/mcp-config.json`:
       }
     },
     "lablink": {
-      "command": "C:\\install\\lablink-mcp.exe"
+      "command": "C:\\install\\lablink-server.exe"
     }
   }
 }
